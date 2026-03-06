@@ -51,17 +51,28 @@ En début de session, lire les deux : MEMORY.md pour le contexte, STATE.md pour 
 
 ---
 
-## Workflow de base
+## Workflows — choisir le bon parcours
+
+### Parcours rapide — tâche claire, scope connu
 
 ```
-/workflows:brainstorm    → si requirements flous
-/workflows:plan          → planifier (consulte memory/ + docs/solutions/ en premier)
-/gsd:plan-phase          → plans atomiques avec vérification structurelle
-/pre-flight              → review multi-agent du plan (sécurité, perf, archi, flows)
-/gsd:execute-phase       → exécuter avec subagents frais en waves parallèles
-  → closure obligatoire  → résumé planifié vs réalisé
-/workflows:review        → review multi-agents avant commit
-/workflows:compound      → déclenche le flywheel (voir ci-dessous)
+/gsd:plan-phase → /pre-flight → /gsd:execute-phase → closure → /workflows:review
+```
+
+### Parcours standard — feature à planifier
+
+```
+/workflows:brainstorm (si requirements flous)
+→ /gsd:plan-phase → /pre-flight → /gsd:execute-phase → closure
+→ /workflows:review → /workflows:compound
+```
+
+### Parcours complet — grosse feature multi-phases
+
+```
+/workflows:brainstorm → /workflows:plan
+→ /gsd:plan-phase → /pre-flight → /gsd:execute-phase → closure
+→ /workflows:review → /workflows:compound
 ```
 
 ### Workflow détaillé par phase de projet
