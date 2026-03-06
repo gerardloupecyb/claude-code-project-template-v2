@@ -93,15 +93,15 @@ Phase capitalisation :
 
 ### Règle #1 — Début de session : charger avant de coder
 
-Au démarrage de chaque session, Claude doit TOUJOURS lire dans cet ordre :
+Au démarrage de chaque session, Claude doit TOUJOURS :
 
-1. `memory/MEMORY.md`               → état courant, où on en est, décisions actives
-2. `docs/solutions/{domaine}/`      → patterns connus sur le domaine du jour
-3. Supermemory query sur domaine    → leçons cross-projet pertinentes
-4. CARL charge `{{CARL_DOMAIN}}` automatiquement selon contexte détecté
+1. Lire `memory/MEMORY.md` → état courant, où on en est, décisions actives
+2. CARL charge `{{CARL_DOMAIN}}` automatiquement selon contexte détecté
+
+C'est tout. Ne pas charger docs/solutions/ ni Supermemory au démarrage —
+ces sources sont consultées uniquement lors de la planification (voir Règle de consultation).
 
 Ne jamais commencer à planifier ou coder avant d'avoir lu MEMORY.md.
-C'est le point d'entrée obligatoire de chaque session.
 En début de session, vider la section "Déviations d'exécution" de MEMORY.md (données de la session précédente).
 
 ---
@@ -114,6 +114,9 @@ Avant de fermer la session, Claude doit mettre à jour `memory/MEMORY.md` :
 - Décisions prises et leur raison courte
 - Prochaine étape claire (une seule, actionnable)
 - Blocages ou questions ouvertes
+
+Plafonnement : garder uniquement les 5 dernières entrées dans "Ce qui a été fait".
+Supprimer les entrées plus anciennes (l'historique complet reste dans Git).
 
 Si la session a produit un pattern → déclencher le flywheel.
 Commiter MEMORY.md avec le code dans le même commit.
@@ -358,15 +361,14 @@ Message : `feat: [ce qui a été construit] / docs: pattern {nom} → {domaine}`
 ## Règle de consultation — début de chaque planification
 
 Avant de planifier (que ce soit `/workflows:plan`, `/gsd:plan-phase`, ou `/gsd:discuss-phase`),
-Claude doit exécuter cette séquence de consultation :
+Claude doit compléter le contexte de session (Règle #1) avec les sources de planification :
 
-1. Lire `memory/MEMORY.md`                       → état courant
-2. Lancer l'agent `learnings-researcher` sur `docs/solutions/` avec les mots-clés du domaine
+1. Lancer l'agent `learnings-researcher` sur `docs/solutions/` avec les mots-clés du domaine
    → patterns connus, anti-patterns, solutions validées
-3. Interroger Supermemory sur le domaine         → leçons cross-projet
-4. CARL charge le domaine automatiquement        → règles injectées
-5. Intégrer tout ça dans le plan → ne pas redécouvrir
+2. Interroger Supermemory sur le domaine         → leçons cross-projet
+3. Intégrer tout ça dans le plan → ne pas redécouvrir
 
+MEMORY.md et CARL sont déjà chargés par la Règle #1 — ne pas recharger.
 Cette séquence s'applique à TOUTES les commandes de planification, pas seulement `/workflows:plan`.
 
 ---

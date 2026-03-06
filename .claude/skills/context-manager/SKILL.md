@@ -20,11 +20,12 @@ tâches complexes.
 
 ### Démarrage de session
 
-TOUJOURS lire dans cet ordre avant de coder ou planifier :
+TOUJOURS lire avant de coder ou planifier :
 
 1. memory/MEMORY.md          → état courant, décisions actives
-2. docs/solutions/{domaine}/ → patterns connus sur le domaine du jour
-3. Supermemory query          → leçons cross-projet si domaine connu
+
+docs/solutions/ et Supermemory sont chargés uniquement lors de la planification,
+pas à chaque début de session (économie de tokens).
 
 Si MEMORY.md n'existe pas → le créer depuis le template avant de continuer.
 Ne jamais supposer le contexte. Toujours le lire.
