@@ -114,6 +114,7 @@ ces sources sont consultées uniquement lors de la planification (voir Règle de
 
 Ne jamais commencer à planifier ou coder avant d'avoir lu MEMORY.md.
 En début de session, vider la section "Déviations d'exécution" de MEMORY.md (données de la session précédente).
+Optionnellement, lancer `/session-gate start` pour valider l'état de MEMORY.md.
 
 ---
 
@@ -131,6 +132,7 @@ Supprimer les entrées plus anciennes (l'historique complet reste dans Git).
 
 Si la session a produit un pattern → déclencher le flywheel.
 Commiter MEMORY.md avec le code dans le même commit.
+Optionnellement, lancer `/session-gate end` avant le commit pour vérifier que MEMORY.md est à jour.
 
 ---
 
@@ -416,7 +418,7 @@ Lors de `/workflows:compound` :
 | `.planning/{phase}-PREFLIGHT.md` | `/pre-flight` | `/workflows:compound` |
 | `.planning/{phase}-VERIFICATION.md` | `/gsd:verify-work` | `/workflows:review` |
 | `.planning/{phase}-{N}-SUMMARY.md` | `/gsd:execute-phase` + closure | `/workflows:review`, `/workflows:compound` |
-| `memory/MEMORY.md` | Toutes les sessions | Toutes les sessions |
+| `memory/MEMORY.md` | Toutes les sessions | Toutes les sessions, `/session-gate` |
 | `STATE.md` | GSD (position technique) | GSD uniquement |
 
 ---
