@@ -1,0 +1,13 @@
+# Intégrations actives — {{PROJECT_NAME}}
+
+> Source de vérité pour les outils externes actifs sur ce projet.
+> Lu par tous les skills (project-sync, etc.).
+> Modifier les valeurs true/false selon les outils configurés.
+
+linear: false
+linear_team_id:
+linear_project_id:
+
+gsd: false
+
+supermemory: false

@@ -182,9 +182,13 @@ AC-4: Given un MEMORY.md avec date "Dernière session" il y a 12 jours,
       When `/session-gate start` est invoqué,
       Then check 2 affiche [--] "12 days ago" (info, pas [!!]).
 
-AC-5: Given des fichiers stagés sans MEMORY.md et rien n'est stagé,
-      When `/session-gate end` est invoqué,
-      Then check 7 est [!!] dans le premier cas, skip dans le second.
+AC-5a: Given des fichiers stagés mais MEMORY.md n'est PAS parmi eux,
+       When `/session-gate end` est invoqué,
+       Then check 7 affiche [!!] "Files are staged but MEMORY.md is not".
+
+AC-5b: Given aucun fichier stagé (session brainstorm, pas de code),
+       When `/session-gate end` est invoqué,
+       Then check 7 est skippé (non applicable).
 ```
 
 ---
@@ -204,6 +208,7 @@ AC-5: Given des fichiers stagés sans MEMORY.md et rien n'est stagé,
 |---|---|
 | MEMORY.md n'existe pas | Check 1 = [!!] + message "créer depuis template" |
 | MEMORY.md a des merge conflicts | Pré-check : reporter et sauter les checks restants |
+| Template MEMORY.md modifié (table Déviations restructurée) | Check 3 assume exactement 2 lignes `\|` avant les données (header + separator). **Invariant implicite** : si `memory/MEMORY.md.template` change la structure de cette table, Check 3 doit être mis à jour en conséquence. |
 | Première session (placeholders) | Check 5 attrape `{{...}}` dans prochaine étape. Check 2 affiche l'âge sans flag. |
 | Pas de GSD actif (pas de STATE.md) | Aucun impact — aucun check ne lit STATE.md |
 | Session sans code (brainstorm only) | Check 7 : rien n'est stagé → skip |

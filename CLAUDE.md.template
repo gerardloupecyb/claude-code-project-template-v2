@@ -33,6 +33,7 @@
 | docs/solutions/ | Patterns et leçons apprises, référence durable | Flywheel | Post /workflows:compound |
 | .carl/{{CARL_DOMAIN}} | Règles comportementales CARL, chargées automatiquement | Flywheel | Quand pattern réutilisable classifié |
 | Supermemory | Mémoire cross-projet, cross-session, personnelle | Flywheel | Quand pattern cross-projet classifié |
+| .claude/integrations.md | Outils externes actifs (Linear, GSD, Supermemory) | Setup manuel | Au setup du projet ou changement d'outils |
 
 ### Séparation STATE.md vs MEMORY.md
 
@@ -133,6 +134,7 @@ Supprimer les entrées plus anciennes (l'historique complet reste dans Git).
 Si la session a produit un pattern → déclencher le flywheel.
 Commiter MEMORY.md avec le code dans le même commit.
 Optionnellement, lancer `/session-gate end` avant le commit pour vérifier que MEMORY.md est à jour.
+Optionnellement, lancer `/project-sync` pour synchroniser l'état avec les outils externes (Linear, GSD).
 
 ---
 

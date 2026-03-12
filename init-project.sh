@@ -66,6 +66,7 @@ echo "→ Creating directory structure..."
 mkdir -p "${PROJECT_DIR}/.claude/skills/context-manager"
 mkdir -p "${PROJECT_DIR}/.claude/skills/pre-flight"
 mkdir -p "${PROJECT_DIR}/.claude/skills/session-gate"
+mkdir -p "${PROJECT_DIR}/.claude/skills/project-sync"
 mkdir -p "${PROJECT_DIR}/.carl"
 mkdir -p "${PROJECT_DIR}/docs/solutions"
 mkdir -p "${PROJECT_DIR}/docs/plans"
@@ -82,6 +83,8 @@ cp "${TEMPLATE_DIR}/.claude/skills/pre-flight/SKILL.md" \
    "${PROJECT_DIR}/.claude/skills/pre-flight/SKILL.md"
 cp "${TEMPLATE_DIR}/.claude/skills/session-gate/SKILL.md" \
    "${PROJECT_DIR}/.claude/skills/session-gate/SKILL.md"
+cp "${TEMPLATE_DIR}/.claude/skills/project-sync/SKILL.md" \
+   "${PROJECT_DIR}/.claude/skills/project-sync/SKILL.md"
 
 # Generate CLAUDE.md from template
 echo "→ Generating CLAUDE.md..."
@@ -96,6 +99,11 @@ sed -e "s|{{PROJECT_NAME}}|${PROJECT_NAME}|g" \
     -e "s|{{DATE}}|${TODAY}|g" \
     -e "s|{{PROJECT_PATH}}|${PROJECT_DIR}|g" \
     "${TEMPLATE_DIR}/memory/MEMORY.md.template" > "${PROJECT_DIR}/memory/MEMORY.md"
+
+# Generate integrations.md from template
+echo "→ Generating .claude/integrations.md..."
+sed -e "s|{{PROJECT_NAME}}|${PROJECT_NAME}|g" \
+    "${TEMPLATE_DIR}/.claude/integrations.md.template" > "${PROJECT_DIR}/.claude/integrations.md"
 
 # Generate CARL manifest
 echo "→ Generating .carl/manifest..."
@@ -132,6 +140,8 @@ echo "    • memory/MEMORY.md       (edit: Contexte, Stack, Liens)"
 echo "    • .claude/skills/context-manager/SKILL.md  (ready to use)"
 echo "    • .claude/skills/pre-flight/SKILL.md       (ready to use)"
 echo "    • .claude/skills/session-gate/SKILL.md     (ready to use)"
+echo "    • .claude/skills/project-sync/SKILL.md    (ready to use)"
+echo "    • .claude/integrations.md                 (edit: set linear/gsd/supermemory true/false)"
 echo "    • .carl/manifest         (ready to use)"
 echo "    • .carl/${CARL_DOMAIN}   (add project-specific rules)"
 echo "    • docs/ + todos/ + src/  (empty, ready)"
