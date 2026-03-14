@@ -28,27 +28,32 @@
 
 | Fichier | Rôle | Géré par | Mis à jour quand |
 |---------|------|----------|-----------------|
-| memory/MEMORY.md | Contexte métier : décisions actives, prochaine étape, patterns découverts, blocages | Template (sessions) | Début et fin de chaque session |
+| memory/MEMORY.md | Contexte métier : décisions actives, prochaine étape, blocages | Template (sessions) | Début et fin de chaque session |
+| LESSONS.md | Cache chaud des leçons apprises (cap 50), format quand/faire/parce que | `/lesson` | Après chaque fix non-trivial |
 | STATE.md | Position technique : phase active, wave courante, tasks complétées, milestone | GSD (automatique) | Automatiquement par GSD à chaque commande |
-| docs/solutions/ | Patterns et leçons apprises, référence durable | Flywheel | Post /workflows:compound |
-| .carl/{{CARL_DOMAIN}} | Règles comportementales CARL, chargées automatiquement | Flywheel | Quand pattern réutilisable classifié |
-| Supermemory | Mémoire cross-projet, cross-session, personnelle | Flywheel | Quand pattern cross-projet classifié |
+| .carl/{{CARL_DOMAIN}} | Règles critiques CARL, injectées automatiquement | `/lesson` (promotion) | Quand leçon critique ou répétée |
+| Supermemory (projet) | Archive principale des leçons, cherchable via `recall` | `/lesson migrate` | Quand LESSONS.md atteint le cap |
+| docs/solutions/ | Backup local git des leçons migrées + patterns détaillés | `/lesson migrate` | Copie locale lors de la migration |
 | .claude/integrations.md | Outils externes actifs (Linear, GSD, Supermemory) | Setup manuel | Au setup du projet ou changement d'outils |
 
-### Séparation STATE.md vs MEMORY.md
+### Séparation des fichiers d'état
 
-Ces deux fichiers coexistent sans se chevaucher :
+Ces fichiers coexistent sans se chevaucher :
 
 - **STATE.md** = le GPS technique. Où on est dans le roadmap GSD (phase, wave, task).
   Géré automatiquement par GSD. Ne PAS éditer manuellement.
   Ne contient PAS de décisions métier ni de contexte de session.
 
 - **MEMORY.md** = le journal de bord. Contexte métier, décisions prises et pourquoi,
-  prochaine étape humaine, blocages, patterns découverts.
+  prochaine étape humaine, blocages.
   Géré manuellement par Claude en début/fin de session.
-  Ne contient PAS de position technique GSD.
+  Ne contient PAS de position technique GSD ni de leçons (→ LESSONS.md).
 
-En début de session, lire les deux : MEMORY.md pour le contexte, STATE.md pour la position.
+- **LESSONS.md** = le cache chaud des leçons. Format quand/faire/parce que, cap 50.
+  Géré par `/lesson`. Lu automatiquement à chaque session.
+  Ne contient PAS d'état de session (→ MEMORY.md) ni de patterns détaillés (→ Supermemory/docs/solutions/).
+
+En début de session, lire les trois : MEMORY.md pour le contexte, LESSONS.md pour les leçons, STATE.md pour la position.
 
 ---
 
@@ -108,12 +113,13 @@ Phase capitalisation :
 Au démarrage de chaque session, Claude doit TOUJOURS :
 
 1. Lire `memory/MEMORY.md` → état courant, où on en est, décisions actives
-2. CARL charge `{{CARL_DOMAIN}}` automatiquement selon contexte détecté
+2. Lire `LESSONS.md` → leçons apprises, à appliquer immédiatement
+3. CARL charge `{{CARL_DOMAIN}}` automatiquement selon contexte détecté
 
-C'est tout. Ne pas charger docs/solutions/ ni Supermemory au démarrage —
+C'est tout. Ne pas charger Supermemory ni docs/solutions/ au démarrage —
 ces sources sont consultées uniquement lors de la planification (voir Règle de consultation).
 
-Ne jamais commencer à planifier ou coder avant d'avoir lu MEMORY.md.
+Ne jamais commencer à planifier ou coder avant d'avoir lu MEMORY.md et LESSONS.md.
 En début de session, vider la section "Déviations d'exécution" de MEMORY.md (données de la session précédente).
 Optionnellement, lancer `/session-gate start` pour valider l'état de MEMORY.md.
 
@@ -131,8 +137,9 @@ Avant de fermer la session, Claude doit mettre à jour `memory/MEMORY.md` :
 Plafonnement : garder uniquement les 5 dernières entrées dans "Ce qui a été fait".
 Supprimer les entrées plus anciennes (l'historique complet reste dans Git).
 
-Si la session a produit un pattern → déclencher le flywheel.
-Commiter MEMORY.md avec le code dans le même commit.
+Si la session a résolu un problème non-trivial → proposer `/lesson` pour capturer la leçon.
+Si un pattern lourd nécessite du détail (code, anti-patterns) → déclencher le flywheel complet (`/workflows:compound`).
+Commiter MEMORY.md et LESSONS.md avec le code dans le même commit.
 Optionnellement, lancer `/session-gate end` avant le commit pour vérifier que MEMORY.md est à jour.
 Optionnellement, lancer `/project-sync` pour synchroniser l'état avec les outils externes (Linear, GSD).
 
@@ -180,23 +187,24 @@ Ne jamais sauter cette étape sur des décisions d'architecture ou de logique m�
 
 ---
 
-### Règle #5 — Supermemory : quand et comment sauvegarder
+### Règle #5 — Supermemory : archive principale par projet
 
-Sauvegarder dans Supermemory seulement si :
+Supermemory sert de **source de vérité pour les leçons archivées**, organisées par projet.
+Les leçons y arrivent via `/lesson migrate` (quand LESSONS.md atteint le cap 50).
 
-- Pattern cross-projet (s'applique à d'autres projets futurs)
-- Décision d'architecture structurante
-- Leçon apprise après une erreur coûteuse
-- Convention ou préférence de travail personnelle
+Deux types de contenu dans Supermemory :
 
-Ne pas sauvegarder :
+**Leçons projet** (via `/lesson migrate`) :
+```
+[lesson:{domaine}] Titre court
+Quand: situation précise
+Faire: action concrète
+Parce que: raison courte
+Projet: {{PROJECT_NAME}}
+Date: YYYY-MM-DD
+```
 
-- Détails spécifiques à ce projet       → MEMORY.md ou docs/solutions/
-- Code ou implémentation                → Git
-- Choses triviales ou évidentes
-
-Format obligatoire pour chaque entrée Supermemory :
-
+**Leçons cross-projet** (via flywheel `/workflows:compound`) :
 ```
 [tag:{domaine}] Titre court et précis
 Contexte : dans quel projet/situation découvert
@@ -208,12 +216,16 @@ Réf : chemin fichier ou URL si applicable
 
 Tags standards :
 
+- `[lesson:{domaine}]`        → leçon projet migrée depuis LESSONS.md
 - `[skill:{domaine}]`         → règle technique réutilisable
 - `[decision:architecture]`   → choix structurant cross-projets
 - `[decision:stack]`          → choix de librairie ou outil
 - `[lesson:error]`            → erreur à ne pas répéter
 - `[convention:workflow]`     → façon de travailler à retenir
 - `[context:preference]`      → préférence personnelle sur comment travailler
+
+Ne pas sauvegarder directement dans Supermemory — passer par `/lesson` (rapide) ou `/workflows:compound` (complet).
+Ne pas stocker de code ou credentials dans Supermemory.
 
 ---
 
@@ -243,14 +255,15 @@ CARL = règles injectées dynamiquement par hook. Skills = prompts invocables pa
 
 Ne jamais :
 
-- Commencer une session sans lire MEMORY.md
+- Commencer une session sans lire MEMORY.md et LESSONS.md
 - Continuer une session dont le contexte est clairement dégradé
 - Sauvegarder dans Supermemory sans tag structuré
-- Dupliquer un pattern dans docs/solutions/ au lieu de mettre à jour l'existant
-- Stocker des credentials ou données clients dans MEMORY.md, docs/ ou Supermemory
-- Mélanger l'état courant (MEMORY.md) avec les patterns durables (docs/solutions/)
-- Modifier un domaine CARL sans que le pattern ait été classifié d'abord
+- Sauvegarder directement dans Supermemory — passer par `/lesson migrate` ou `/workflows:compound`
+- Stocker des credentials ou données clients dans MEMORY.md, LESSONS.md, docs/ ou Supermemory
+- Mélanger l'état courant (MEMORY.md) avec les leçons (LESSONS.md)
+- Modifier un domaine CARL sans que la leçon ait été capturée d'abord dans LESSONS.md
 - Créer un domaine CARL avec moins de 3 règles distinctes
+- Ignorer LESSONS.md lors de la planification — c'est la première source à consulter
 
 ---
 
@@ -293,6 +306,20 @@ Si une tâche nécessite de modifier un fichier listé en frontière,
 le signaler comme déviation dans MEMORY.md avant de procéder.
 
 ---
+
+## Capture des leçons — deux chemins
+
+### Chemin rapide — `/lesson` (80% des cas)
+
+Après un fix non-trivial, Claude propose une leçon au format quand/faire/parce que.
+L'utilisateur confirme (oui/non). La leçon va dans LESSONS.md.
+Si critique ou répétée → promotion CARL proposée automatiquement.
+Si cap 50 atteint → `/lesson migrate` vers Supermemory + docs/solutions/.
+
+### Chemin complet — `/workflows:compound` (patterns lourds)
+
+Pour les patterns qui nécessitent du détail (code, anti-patterns, raisonnement long).
+Produit un fichier complet dans docs/solutions/.
 
 ## Flywheel — instructions post /workflows:compound
 
@@ -378,12 +405,13 @@ Message : `feat: [ce qui a été construit] / docs: pattern {nom} → {domaine}`
 Avant de planifier (que ce soit `/workflows:plan`, `/gsd:plan-phase`, ou `/gsd:discuss-phase`),
 Claude doit compléter le contexte de session (Règle #1) avec les sources de planification :
 
-1. Lancer l'agent `learnings-researcher` sur `docs/solutions/` avec les mots-clés du domaine
-   → patterns connus, anti-patterns, solutions validées
-2. Interroger Supermemory sur le domaine         → leçons cross-projet
-3. Intégrer tout ça dans le plan → ne pas redécouvrir
+1. LESSONS.md est déjà chargé (Règle #1) → leçons récentes, applicables immédiatement
+2. `recall` Supermemory avec les mots-clés du domaine → leçons archivées + cross-projet
+3. Si besoin de plus de détail OU Supermemory indisponible :
+   lancer l'agent `learnings-researcher` sur `docs/solutions/` → patterns complets avec code
+4. Intégrer tout ça dans le plan → ne pas redécouvrir
 
-MEMORY.md et CARL sont déjà chargés par la Règle #1 — ne pas recharger.
+MEMORY.md, LESSONS.md et CARL sont déjà chargés par la Règle #1 — ne pas recharger.
 Cette séquence s'applique à TOUTES les commandes de planification, pas seulement `/workflows:plan`.
 
 ---
@@ -414,7 +442,8 @@ Lors de `/workflows:compound` :
 
 | Fichier | Producteur | Consommateurs |
 |---------|-----------|---------------|
-| `docs/solutions/` | `/workflows:compound` | `/gsd:plan-phase`, `/workflows:plan`, `learnings-researcher` |
+| `LESSONS.md` | `/lesson` | Toutes les sessions (lu au démarrage), planification |
+| `docs/solutions/` | `/lesson migrate`, `/workflows:compound` | `learnings-researcher` (fallback ou profondeur) |
 | `docs/plans/` | `/workflows:plan` | `/gsd:discuss-phase` |
 | `.planning/{phase}-PLAN.md` | `/gsd:plan-phase` | `/pre-flight`, `/gsd:execute-phase` |
 | `.planning/{phase}-PREFLIGHT.md` | `/pre-flight` | `/workflows:compound` |
@@ -422,17 +451,18 @@ Lors de `/workflows:compound` :
 | `.planning/{phase}-{N}-SUMMARY.md` | `/gsd:execute-phase` + closure | `/workflows:review`, `/workflows:compound` |
 | `memory/MEMORY.md` | Toutes les sessions | Toutes les sessions, `/session-gate` |
 | `STATE.md` | GSD (position technique) | GSD uniquement |
+| Supermemory (projet) | `/lesson migrate` | `recall` à la planification |
 
 ---
 
 ## Ce que les agents ne font PAS
 
-- Commencer sans lire MEMORY.md
-- Modifier un domaine CARL sans classifier le pattern d'abord
-- Sauvegarder dans Supermemory sans tag structuré
+- Commencer sans lire MEMORY.md et LESSONS.md
+- Modifier un domaine CARL sans leçon capturée d'abord dans LESSONS.md
+- Sauvegarder directement dans Supermemory (passer par `/lesson migrate` ou `/workflows:compound`)
 - Documenter du code standard et trivial
-- Dupliquer un pattern existant au lieu de mettre à jour
-- Stocker des données sensibles dans MEMORY.md ou docs/solutions/
+- Dupliquer une leçon existante dans LESSONS.md au lieu de mettre à jour
+- Stocker des données sensibles dans MEMORY.md, LESSONS.md ou docs/solutions/
 - Créer un domaine CARL avec moins de 3 règles distinctes
 - Continuer une session dont le contexte est dégradé
 

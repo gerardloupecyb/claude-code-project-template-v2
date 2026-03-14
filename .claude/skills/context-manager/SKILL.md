@@ -23,11 +23,13 @@ tâches complexes.
 TOUJOURS lire avant de coder ou planifier :
 
 1. memory/MEMORY.md          → état courant, décisions actives
+2. LESSONS.md                → leçons apprises, à appliquer immédiatement
 
-docs/solutions/ et Supermemory sont chargés uniquement lors de la planification,
+Supermemory et docs/solutions/ sont consultés uniquement lors de la planification,
 pas à chaque début de session (économie de tokens).
 
 Si MEMORY.md n'existe pas → le créer depuis le template avant de continuer.
+Si LESSONS.md n'existe pas → le créer depuis le template avant de continuer.
 Ne jamais supposer le contexte. Toujours le lire.
 
 ### Fin de session
@@ -39,7 +41,8 @@ Mettre à jour MEMORY.md avant de fermer :
 - Une seule prochaine étape, claire et actionnable
 - Blocages ou questions ouvertes
 
-Commiter MEMORY.md dans le même commit que le code produit.
+Si la session a résolu un problème non-trivial → proposer `/lesson` pour capturer.
+Commiter MEMORY.md et LESSONS.md dans le même commit que le code produit.
 
 ---
 
@@ -107,34 +110,15 @@ Où mettre ce bloc :
 
 ---
 
-## Supermemory — protocole de sauvegarde
+## Supermemory — archive principale par projet
 
-### Sauvegarder si et seulement si
-
-- Pattern applicable à d'autres projets futurs (cross-projet)
-- Décision d'architecture structurante qu'on voudra retrouver
-- Leçon apprise après une erreur coûteuse en temps ou en qualité
-- Convention de travail personnelle à retenir
-
-### Ne pas sauvegarder
-
-- Détails spécifiques à ce projet         → MEMORY.md ou docs/solutions/
-- Code ou implémentation                  → Git
-- Choses triviales, documentation standard
-
-### Format obligatoire
-
-```
-[tag:{domaine}] Titre court et précis
-Contexte : projet/situation où découvert
-Problème : ce qui se passait avant ce pattern
-Solution : ce qui fonctionne
-Règle : "Toujours X quand Y." — une phrase actionnable
-Réf : chemin fichier ou URL si applicable
-```
+Supermemory sert d'archive des leçons, organisée par projet.
+Les leçons y arrivent via `/lesson migrate` (quand LESSONS.md atteint le cap 50).
+Ne pas sauvegarder directement dans Supermemory — passer par `/lesson` ou `/workflows:compound`.
 
 ### Tags standards
 
+- `[lesson:{domaine}]`        → leçon projet migrée depuis LESSONS.md
 - `[skill:{domaine}]`         → règle technique réutilisable
 - `[decision:architecture]`   → choix structurant cross-projets
 - `[decision:stack]`          → choix de librairie ou outil
@@ -144,41 +128,49 @@ Réf : chemin fichier ou URL si applicable
 
 ---
 
-## Hiérarchie des couches mémoire
+## Hiérarchie des couches mémoire (cache L1→L4)
 
-Utiliser la bonne couche pour la bonne information :
+| Couche | Contenu | Accès |
+|--------|---------|-------|
+| CARL rules | Règles critiques one-liner | Auto-injecté chaque prompt |
+| LESSONS.md | Leçons récentes (quand/faire/parce que, cap 50) | Lu chaque session |
+| Supermemory (projet) | Leçons archivées + résumés structurés | `recall` à la planification |
+| docs/solutions/ | Patterns complets + code (backup git) | Agent search (fallback ou profondeur) |
 
 | Information | Où la mettre |
 |-------------|-------------|
 | État courant du projet, où on en est | memory/MEMORY.md |
 | Décisions actives qui influencent le code | memory/MEMORY.md → Décisions actives |
-| Pattern résolu sur CE projet | docs/solutions/{domaine}/ |
-| Pattern réutilisable sur plusieurs projets | docs/solutions/ + domaine CARL |
-| Leçon cross-projet, préférence personnelle | Supermemory |
+| Leçon apprise récente | LESSONS.md (via `/lesson`) |
+| Leçon critique ou répétée | CARL rule (promotion via `/lesson`) |
+| Leçon archivée (cap LESSONS.md atteint) | Supermemory projet + docs/solutions/ |
+| Pattern détaillé avec code | docs/solutions/ (via `/workflows:compound`) |
 | Code et implémentation | Git |
 | Credentials et secrets | .env (jamais dans mémoire) |
 
-Ne jamais mélanger les couches. Un pattern dans MEMORY.md qui dure
-plus d'une semaine doit migrer vers docs/solutions/.
+Ne jamais mélanger les couches. Une leçon dans MEMORY.md doit migrer
+vers LESSONS.md via `/lesson`.
 
 ---
 
 ## Anti-patterns
 
-- Commencer à coder sans lire MEMORY.md
+- Commencer à coder sans lire MEMORY.md et LESSONS.md
 - Continuer une session dont le contexte est dégradé
-- Sauvegarder dans Supermemory sans tag structuré
-- Mettre un pattern dans Supermemory s'il n'est pas cross-projet
-- Dupliquer un pattern dans docs/solutions/ au lieu de le mettre à jour
-- Stocker credentials ou données clients dans MEMORY.md, docs/, ou Supermemory
+- Sauvegarder directement dans Supermemory (passer par `/lesson` ou `/workflows:compound`)
+- Dupliquer une leçon dans LESSONS.md au lieu de mettre à jour l'existante
+- Stocker credentials ou données clients dans MEMORY.md, LESSONS.md, docs/, ou Supermemory
 - Faire du chain of thought en tête implicitement sans l'externaliser
 - Créer un domaine CARL avec moins de 3 règles distinctes
+- Ignorer LESSONS.md lors de la planification
 
 ---
 
 ## Références
 
-- memory/MEMORY.md                    → template état courant projet
-- docs/solutions/                     → patterns durables
-- .carl/{domaine}                     → domaine CARL actif
+- memory/MEMORY.md                    → état courant projet
+- LESSONS.md                          → cache chaud des leçons (cap 50)
+- Supermemory (projet)                → archive principale des leçons
+- docs/solutions/                     → backup local + patterns détaillés
+- .carl/{domaine}                     → règles critiques injectées
 - CLAUDE.md du projet                 → règles flywheel complètes

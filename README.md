@@ -6,18 +6,20 @@ Template de projet pour Claude Code avec flywheel de capitalisation, gestion de 
 
 Claude Code perd son contexte entre les sessions. Sans systeme structure, chaque nouvelle session repart de zero : memes erreurs, memes questions, memes decouvertes.
 
-Ce template resout ca avec 4 couches complementaires :
+Ce template resout ca avec un systeme de retention a 4 couches, comme un cache L1/L2/L3/L4 :
 
-| Couche | Fichier | Requis | Role |
-|--------|---------|--------|------|
-| Etat courant | `memory/MEMORY.md` | Oui | Ou on en est, decisions actives, prochaine etape |
-| Patterns durables | `docs/solutions/` | Oui | Lecons apprises, patterns valides, anti-patterns |
-| Regles dynamiques | `.carl/` | Recommande | Injectees automatiquement selon le contexte du prompt |
-| Memoire cross-projet | Supermemory (MCP) | Optionnel | Lecons qui s'appliquent a tous les projets |
+| Couche | Fichier | Acces | Role |
+|--------|---------|-------|------|
+| CARL rules | `.carl/` | Auto-injecte chaque prompt | Regles critiques, impossibles a ignorer |
+| Cache chaud | `LESSONS.md` | Lu chaque session (cap 50) | Lecons recentes, quand/faire/parce que |
+| Archive | Supermemory (projet) | `recall` a la planification | Lecons archivees, cherchables |
+| Backup | `docs/solutions/` | Agent search (fallback/profondeur) | Copie git + patterns detailles |
 
-Le **flywheel** fait tourner ces couches : chaque probleme resolu est classe, documente, et reinjecte dans les sessions futures.
+Chaque couche ajoute du detail. Claude descend dans la pile seulement quand il a besoin de plus.
 
-**Sans CARL ni Supermemory**, le template fonctionne quand meme — tu gardes le flywheel (`MEMORY.md` + `docs/solutions/` + context-manager skill). CARL et Supermemory ajoutent l'automatisation et la memoire cross-projet.
+**Le flywheel** : chaque probleme resolu est capture via `/lesson` (10 sec), puis promu en regle CARL si critique, puis migre vers Supermemory quand le cap est atteint.
+
+**Sans CARL ni Supermemory**, le template fonctionne quand meme — tu gardes `MEMORY.md` + `LESSONS.md` + context-manager skill. CARL et Supermemory ajoutent l'injection automatique et l'archivage.
 
 ## Prerequis
 
@@ -210,12 +212,16 @@ mkdir -p .claude/skills/mon-skill-expert
 
 ```
 Mon Projet/
-├── CLAUDE.md                              <- Regles projet + flywheel + workflow
+├── CLAUDE.md                              <- Regles projet + workflows
+├── LESSONS.md                             <- Cache chaud lecons (cap 50, /lesson)
 │
 ├── .claude/
 │   └── skills/
-│       └── context-manager/
-│           └── SKILL.md                   <- Gestion contexte (universel)
+│       ├── context-manager/SKILL.md       <- Gestion contexte (universel)
+│       ├── pre-flight/SKILL.md            <- Review multi-agent des plans
+│       ├── session-gate/SKILL.md          <- Validation MEMORY.md
+│       ├── project-sync/SKILL.md          <- Sync outils externes
+│       └── lesson/SKILL.md               <- Capture rapide de lecons
 │
 ├── .carl/
 │   ├── manifest                           <- Config domaine CARL
@@ -225,7 +231,7 @@ Mon Projet/
 │   └── MEMORY.md                          <- Etat courant (lu en premier)
 │
 ├── docs/
-│   ├── solutions/                         <- Patterns valides (flywheel)
+│   ├── solutions/                         <- Backup local lecons + patterns detailles
 │   ├── plans/                             <- Output /workflows:plan
 │   └── brainstorms/                       <- Output /workflows:brainstorm
 │
@@ -236,25 +242,29 @@ Mon Projet/
 
 ## Comment ca marche
 
-### Le flywheel en 5 etapes
+### Deux chemins de capture
 
 ```
    Probleme resolu
         |
         v
-  1. Classifier -----> ponctuel / reutilisable / cross-projet
+   /lesson (rapide, 80% des cas)
         |
         v
-  2. Documenter -----> docs/solutions/{domaine}/{pattern}.md
+   LESSONS.md (quand/faire/parce que)
+        |
+        +-- si critique ou repetee --> promotion CARL rule
+        |
+        +-- si cap 50 atteint ------> /lesson migrate :
+        |                               1. Supermemory (projet)
+        |                               2. docs/solutions/ (backup git)
+        |
+   /workflows:compound (complet, 20% des cas)
         |
         v
-  3. CARL rule ------> .carl/{domaine} (si reutilisable + CARL installe)
-        |
-        v
-  4. Supermemory ----> memoire cross-projet (si cross-projet + Supermemory installe)
-        |
-        v
-  5. Commit ---------> code + MEMORY.md + docs + CARL dans un seul commit
+   docs/solutions/ (pattern detaille + code + anti-patterns)
+        +-- si reutilisable --> CARL rule
+        +-- si cross-projet --> Supermemory
 ```
 
 ### Cycle de session
@@ -264,10 +274,10 @@ Mon Projet/
   ┌─────────────┐                      ┌──────────────┐
   │ Lire        │                      │ Mettre a jour│
   │ MEMORY.md   │──── travailler ────> │ MEMORY.md    │
-  │ docs/       │                      │ flywheel si  │
-  │ Supermemory │                      │ pattern      │
-  │ CARL auto   │                      │ commit       │
-  └─────────────┘                      └──────────────┘
+  │ LESSONS.md  │                      │ /lesson si   │
+  │ CARL auto   │                      │ fix non-triv │
+  └─────────────┘                      │ commit       │
+                                       └──────────────┘
 ```
 
 ### Gestion du contexte long
@@ -284,13 +294,15 @@ Quand le contexte se degrade (~60-70% utilise) :
 | Fonctionnalite | Sans CARL | Avec CARL |
 |----------------|-----------|-----------|
 | MEMORY.md (etat session) | Oui | Oui |
-| docs/solutions/ (flywheel) | Oui | Oui |
+| LESSONS.md (cache chaud) | Oui | Oui |
+| /lesson (capture rapide) | Oui | Oui |
 | context-manager skill | Oui | Oui |
 | Regles injectees auto par prompt | Non | Oui |
+| Promotion lecon → regle CARL | Non | Oui |
 | Keywords recall par domaine | Non | Oui |
 | Context brackets (FRESH/WARM/HOT) | Non | Oui |
 
-Sans CARL, les fichiers `.carl/` existent mais ne sont pas lus automatiquement. Les regles dans CLAUDE.md et le context-manager skill restent actifs.
+Sans CARL, les fichiers `.carl/` existent mais ne sont pas lus automatiquement. Les lecons restent dans LESSONS.md et Supermemory.
 
 ## Fichiers du template
 
@@ -298,10 +310,15 @@ Sans CARL, les fichiers `.carl/` existent mais ne sont pas lus automatiquement. 
 |---------|------|-------------|
 | `init-project.sh` | Script | Genere un projet complet a partir des templates |
 | `CLAUDE.md.template` | Template | Regles projet avec `{{PLACEHOLDER}}` |
+| `LESSONS.md.template` | Template | Cache chaud des lecons (cap 50) |
 | `memory/MEMORY.md.template` | Template | Etat courant avec `{{PLACEHOLDER}}` |
 | `.carl/manifest.template` | Template | Config domaine CARL |
 | `.carl/domain.template` | Template | Regles CARL (3 flywheel + slots) |
-| `.claude/skills/context-manager/SKILL.md` | Skill | Copie tel quel (universel) |
+| `.claude/skills/context-manager/SKILL.md` | Skill | Gestion contexte (universel) |
+| `.claude/skills/lesson/SKILL.md` | Skill | Capture rapide de lecons |
+| `.claude/skills/pre-flight/SKILL.md` | Skill | Review multi-agent des plans |
+| `.claude/skills/session-gate/SKILL.md` | Skill | Validation MEMORY.md |
+| `.claude/skills/project-sync/SKILL.md` | Skill | Sync outils externes |
 
 ## Ajouter des skills tiers
 

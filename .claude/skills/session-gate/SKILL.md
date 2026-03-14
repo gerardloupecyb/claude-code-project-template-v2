@@ -14,9 +14,9 @@ Read-only, advisory, stateless. Never modify files. Never block the session.
 
 | Command | Mode | Checks |
 |---|---|---|
-| `/session-gate start` | START | 1, 2, 3, 4, 5 |
-| `/session-gate end` | END | 1, 4, 5, 6, 7 |
-| `/session-gate` (no arg) | BOTH | All 7 |
+| `/session-gate start` | START | 1, 2, 3, 4, 5, 8 |
+| `/session-gate end` | END | 1, 4, 5, 6, 7, 8 |
+| `/session-gate` (no arg) | BOTH | All 8 |
 
 ---
 
@@ -35,7 +35,7 @@ Skip all remaining checks.
 
 ---
 
-## The 7 Checks
+## The 8 Checks
 
 Run each applicable check. Use `Read` and `Grep` tools on memory/MEMORY.md
 and `Bash` for git status. All checks are mechanical — no semantic judgment.
@@ -98,6 +98,15 @@ Run `git status --porcelain`. Check:
   `[!!] Files are staged but MEMORY.md is not — stage it with the code`
 - If MEMORY.md is staged: `[ok] MEMORY.md staged with code`
 
+### Check 8 — LESSONS.md exists and is non-empty (START, END)
+
+Read LESSONS.md. Verify:
+- File exists
+- File contains at least one markdown heading (`^#`)
+
+If missing or empty: `[!!] LESSONS.md missing or empty — create from template`
+If present: `[ok] LESSONS.md exists and is non-empty`
+
 ---
 
 ## Output format
@@ -110,6 +119,7 @@ Session Gate — {MODE}
   [!!]  "Déviations d'exécution" has 2 entries — clear them
   [ok]  "Ce qui a été fait": 3/5
   [ok]  "Prochaine étape" present
+  [ok]  LESSONS.md exists and is non-empty
 
   1 issue found. Fix before continuing.
 ```
