@@ -2,6 +2,8 @@
 
 Template de projet pour Claude Code avec flywheel de capitalisation, gestion de contexte multi-session, et injection de regles dynamiques via CARL.
 
+> **Guide complet :** [docs/GUIDE.md](docs/GUIDE.md) — architecture 3 couches, 7 skills, hooks, CARL, workflows, FAQ
+
 ## Pourquoi ce template
 
 Claude Code perd son contexte entre les sessions. Sans systeme structure, chaque nouvelle session repart de zero : memes erreurs, memes questions, memes decouvertes.
