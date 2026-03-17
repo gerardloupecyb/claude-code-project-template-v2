@@ -11,6 +11,7 @@
 - Compound Engineering   → planning riche, review, capitalisation
 - CARL                   → règles dynamiques selon contexte (domaine `{{CARL_DOMAIN}}`)
 - Discipline outils      → voir `.claude/rules/tool-routing.md`
+- Quality checks exécution → voir `.claude/rules/execution-quality.md`
 
 ## MCP actifs
 
@@ -126,6 +127,7 @@ Phase amont (requirements → plan) :
 Phase exécution :
   /gsd:execute-phase (waves parallèles, commits atomiques)
     → lire ## Boundaries du PLAN.md avant la première wave
+    → quality checks auto-injectés via .claude/rules/execution-quality.md
   → closure (checklist ci-dessus — écrire SUMMARY.md, MAJ MEMORY.md)
   → /lesson (si fix non-trivial découvert)
   → /gsd:verify-work (UAT goal-backward — vérifie les AC)

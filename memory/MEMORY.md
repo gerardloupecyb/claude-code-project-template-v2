@@ -48,6 +48,7 @@ Template de projet Claude Code avec skills personnalisés (session-gate, context
 | 4 matchers SessionStart | resume + clear ajoutés en plus de startup + compact | 2026-03-16 |
 | git add scopé MEMORY+LESSONS only | Eviter staging de fichiers en cours d'écriture | 2026-03-16 |
 | Flywheel extrait vers .claude/rules/ | CLAUDE.md 505 lignes dépasse le budget 200 d'Anthropic | 2026-03-16 |
+| Quality checks CE via rules, pas remplacement GSD | Hybridation : GSD orchestration + ce-work quality patterns injectés via .claude/rules/execution-quality.md | 2026-03-16 |
 
 ---
 
