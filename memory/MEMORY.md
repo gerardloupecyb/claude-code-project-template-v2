@@ -9,7 +9,7 @@
 
 **Statut :** [ ] En démarrage  [x] En cours  [ ] Bloqué  [ ] Terminé
 **Dernière session :** 2026-03-16
-**Prochaine étape :** Implémenter plan Layer 2 retention gaps (DECISIONS.md, closure quality score, /project-bootstrap, session-gate checks 11-13, CARL RULE_8)
+**Prochaine étape :** Implémenter plan Layer 2 retention gaps (DECISIONS.md, closure quality score, /project-bootstrap, session-gate checks 11-13, CARL RULE_8) — voir docs/plans/2026-03-16-002
 
 ---
 
@@ -20,6 +20,14 @@ Template de projet Claude Code avec skills personnalisés (session-gate, context
 ---
 
 ## Ce qui a été fait
+
+### 2026-03-16 — Execution quality hybridation (ce-work x GSD) — DONE
+
+- Analyse comparative gsd:execute-phase vs ce-work (forces/faiblesses)
+- Décision : hybridation via .claude/rules/ plutôt que remplacement
+- Créé `.claude/rules/execution-quality.md` (42 lignes, 630 tokens) — 3 patterns : system-wide test check, post-deploy monitoring, commit heuristics
+- CLAUDE.md.template mis à jour (outils actifs + phase exécution)
+- Released v2.1.0
 
 ### 2026-03-16 — Context management improvements (10/10 DONE)
 
@@ -70,8 +78,8 @@ Template de projet Claude Code avec skills personnalisés (session-gate, context
 
 ## Patterns découverts cette semaine
 
-Aucun pattern à capitaliser pour l'instant — projet en démarrage.
-→ À traiter au prochain /workflows:compound
+Pattern découvert : injecter des quality patterns cross-workflow via `.claude/rules/` plutôt que modifier les fichiers source d'un workflow externe (GSD). Le mécanisme rules/ est auto-chargé par tous les subagents.
+→ Potentiellement cross-projet si validé en usage réel.
 
 ---
 
