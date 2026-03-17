@@ -1,5 +1,7 @@
 # Claude Code Project Template
 
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/gerardloupecyb/claude-code-project-template-v2/releases)
+
 Template de projet pour Claude Code avec flywheel de capitalisation, gestion de contexte multi-session, et injection de regles dynamiques via CARL.
 
 > **Guide complet :** [docs/GUIDE.md](docs/GUIDE.md) — architecture 3 couches, 7 skills, hooks, CARL, workflows, FAQ
