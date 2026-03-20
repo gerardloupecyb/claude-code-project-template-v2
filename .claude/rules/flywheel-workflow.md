@@ -16,6 +16,13 @@
 
 ---
 
+## Étape 1.5 — Consulter auto memory (supplémentaire)
+
+Avant de documenter, vérifier si l'auto memory de Claude contient des notes pertinentes sur le pattern.
+`ce:compound` v2.45+ le fait automatiquement — cette étape sert de rappel si le flywheel est exécuté manuellement.
+
+---
+
 ## Étape 2 — Documenter dans docs/solutions/
 
 Toujours, quelle que soit la classification.

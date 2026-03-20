@@ -40,3 +40,7 @@ If no runtime impact: add one line — `No monitoring needed: [reason]`
 | About to attempt risky/uncertain changes | Would need a "WIP" commit message |
 
 **Heuristic:** "Can I write a commit message that describes a complete, valuable change? If yes, commit. If the message would be 'WIP', wait."
+
+## Cross-Phase Regression Gate
+
+Before starting a new phase, verify that AC from the previous phase still pass. If a prior phase's AC regresses, fix before continuing — do not accumulate debt across phases.

@@ -38,6 +38,7 @@
 | Supermemory (projet) | Archive principale des leçons, cherchable via `recall` | `/lesson migrate` | Quand LESSONS.md atteint le cap |
 | docs/solutions/ | Backup local git des leçons migrées + patterns détaillés | `/lesson migrate` | Copie locale lors de la migration |
 | .claude/integrations.md | Outils externes actifs (Linear, GSD, Supermemory) | Setup manuel | Au setup du projet ou changement d'outils |
+| Auto memory (Claude) | Notes implicites de Claude (read-only, supplémentaire) | Claude auto | Consulté par `ce:compound` comme source additionnelle |
 
 ### Séparation des fichiers d'état
 
@@ -62,11 +63,19 @@ En début de session, lire les trois : MEMORY.md pour le contexte, LESSONS.md po
 
 ## Workflows — choisir le bon parcours
 
+### Parcours immédiat — fix trivial ou tâche < 50 LOC
+
+```
+/gsd:fast [description]
+→ /gsd:next (prochaine tâche) ou /gsd:ship (PR + cleanup)
+```
+
 ### Parcours rapide — tâche claire, scope connu
 
 ```
 /gsd:plan-phase → /pre-flight → /gsd:execute-phase
 → closure → /lesson → /gsd:verify-work → /ce:review
+→ /gsd:ship (si prêt à merger)
 ```
 
 ### Parcours standard — feature à planifier
@@ -128,10 +137,12 @@ Phase exécution :
   /gsd:execute-phase (waves parallèles, commits atomiques)
     → lire ## Boundaries du PLAN.md avant la première wave
     → quality checks auto-injectés via .claude/rules/execution-quality.md
+    → /gsd:autonomous SI plan GO + 0 finding HIGH au pre-flight (skip sinon)
   → closure (checklist ci-dessus — écrire SUMMARY.md, MAJ MEMORY.md)
   → /lesson (si fix non-trivial découvert)
   → /gsd:verify-work (UAT goal-backward — vérifie les AC)
   → /ce:review (15 agents review spécialisés)
+  → /gsd:review --all SI >3 fichiers OU touche sécurité/auth OU CLI externe dispo (skip sinon)
 
 Phase capitalisation :
   /ce:compound → flywheel (classifier → documenter → CARL → Supermemory)
@@ -197,6 +208,7 @@ décisions, prochaine étape, puis proposition `/lesson` si fix non-trivial).
 
 Ne pas continuer une session dégradée — la qualité se dégrade exponentiellement.
 Une coupure propre avec MEMORY.md à jour vaut mieux qu'une heure de contexte pourri.
+Alternative : GSD propose un context monitor intégré — voir doc GSD si pre-compact.sh s'avère insuffisant.
 
 ---
 
@@ -212,6 +224,13 @@ Une coupure propre avec MEMORY.md à jour vaut mieux qu'une heure de contexte po
 **Override (toujours trigger) :** chaîne de > 3 tool calls, spawn Agent, demande explicite de plan.
 **Skip (jamais de COT) :** fix single-file < 50 LOC, formatting/renaming pur, plan déjà fourni par l'utilisateur.
 **Précédence :** Override > Skip > 2-of-5.
+
+**Plan depth** (aligné sur ce:plan-beta) — déterminé par le nombre de triggers activés :
+- **Lightweight** (0-1 trigger) : AC + files suffisent, pas de block `<plan>` formel
+- **Standard** (2-3 triggers) : block `<plan>` + AC + Boundaries
+- **Deep** (4-5 triggers ou cross-cutting) : plan complet + `## Technical Design` + risk assessment
+
+Si le plan porte une `Execution note:` (posture d'exécution — test-first, characterization-first), la respecter.
 
 Format obligatoire (greppable via `grep -q "<plan>"`) :
 

@@ -42,6 +42,18 @@ Chaque couche ajoute du detail. Claude descend dans la pile seulement quand il a
 - **[GSD](https://github.com/coleam00/gsd)** — execution structuree avec subagents
 - **[Compound Engineering](https://github.com/ColemanDuPlessis/compound-engineering)** — planning, review, capitalisation
 
+### Integrations optionnelles (CLI et MCP externes)
+
+Ces outils ameliorent les workflows GSD et CE sans etre requis — les workflows fonctionnent sans.
+
+| Outil | Installation | Benefice |
+|-------|-------------|----------|
+| Codex CLI | `npm install -g @openai/codex` + cle API OpenAI | Review cross-AI via `/gsd:review --all` |
+| Gemini CLI | Installer via Google + compte Google | Review cross-AI via `/gsd:review --all` |
+| Exa MCP | `claude mcp add exa -s user -e EXA_API_KEY=$EXA_API_KEY -- npx -y exa-mcp-server` | Recherche semantique pour agents research GSD |
+
+Si installe, ajouter une entree dans `.claude/rules/tool-routing.md` (table discipline MCP).
+
 ## Installation des dependances
 
 ### Installer CARL
@@ -234,7 +246,8 @@ Mon Projet/
 │   │   └── session-start.sh               <- Re-injection contexte au demarrage
 │   └── rules/
 │       ├── tool-routing.md                <- Routing outils + anti-flooding
-│       └── flywheel-workflow.md           <- Workflow capitalisation
+│       ├── flywheel-workflow.md           <- Workflow capitalisation
+│       └── execution-quality.md           <- Quality checks execution (cross-phase)
 │
 ├── .carl/
 │   ├── manifest                           <- Config domaine CARL

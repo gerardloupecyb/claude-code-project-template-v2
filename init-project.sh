@@ -112,6 +112,8 @@ cp "${TEMPLATE_DIR}/.claude/rules/tool-routing.md" \
    "${PROJECT_DIR}/.claude/rules/tool-routing.md"
 cp "${TEMPLATE_DIR}/.claude/rules/flywheel-workflow.md" \
    "${PROJECT_DIR}/.claude/rules/flywheel-workflow.md"
+cp "${TEMPLATE_DIR}/.claude/rules/execution-quality.md" \
+   "${PROJECT_DIR}/.claude/rules/execution-quality.md"
 
 # Create settings.json with hook configuration
 echo "→ Creating .claude/settings.json..."
@@ -185,7 +187,7 @@ echo "    • DECISIONS.md           (ready to use — ADR register for architec
 echo "    • .claude/skills/         (7 skills: context-manager, pre-flight, session-gate,"
 echo "                               project-sync, lesson, context-checkpoint, project-bootstrap)"
 echo "    • .claude/hooks/          (pre-compact.sh + session-start.sh)"
-echo "    • .claude/rules/          (tool-routing.md + flywheel-workflow.md)"
+echo "    • .claude/rules/          (tool-routing.md + flywheel-workflow.md + execution-quality.md)"
 echo "    • .claude/settings.json   (hook configuration)"
 echo "    • .claude/integrations.md (edit: set linear/gsd/supermemory true/false)"
 echo "    • .carl/manifest         (ready to use)"
