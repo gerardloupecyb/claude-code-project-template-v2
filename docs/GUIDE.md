@@ -161,7 +161,7 @@ Claude devient imprecis, repete des questions → checkpoint :
 ---
 
 <a id="4-les-7-skills"></a>
-## 4. Les 7 skills inclus
+## 4. Les 8 skills inclus
 
 Chaque skill est un fichier `.claude/skills/{nom}/SKILL.md` — une instruction specialisee que Claude charge quand tu l'invoques.
 
@@ -241,6 +241,21 @@ Les checks sont mecaniques (pas de jugement) et advisory (jamais bloquants).
   4. Spec flow analyzer
 → Produit un rapport GO / CONDITIONAL GO / NO-GO
 ```
+
+### /reference-audit — Auto-population des fichiers de reference
+
+**Quand l'utiliser :** Apres le setup initial, ou periodiquement pour verifier la coherence.
+
+```
+/reference-audit           → Full: detect, populate, cross-reference, staleness
+/reference-audit --dry-run → Report only, no modifications
+/reference-audit --populate → Auto-populate seulement
+/reference-audit --check   → Cross-reference + staleness seulement
+```
+
+Scanne le codebase pour detecter les artifacts d'infrastructure (Dockerfile, .env, package.json,
+MCP settings) et pre-remplit les fichiers `docs/references/`. Verifie aussi la synchronisation
+MCP entre `tool-routing.md` et `services-and-access.md`.
 
 ### /context-manager — Reference contextuelle
 
@@ -555,11 +570,11 @@ Plan mediocre → ROUGH → /lesson "plan trop vague"
 ---
 
 <a id="12-session-gate"></a>
-## 12. Session-gate — 13 checks
+## 12. Session-gate — 15 checks
 
 Session-gate est un validateur mecanique qui verifie l'etat de MEMORY.md. Tous les checks sont **advisory** — ils ne bloquent jamais la session.
 
-### Les 13 checks
+### Les 15 checks
 
 | # | Check | Mode | Type |
 |---|-------|------|------|
@@ -576,6 +591,8 @@ Session-gate est un validateur mecanique qui verifie l'etat de MEMORY.md. Tous l
 | 11 | DECISIONS.md existe et non vide | START, END | `[ok]`/`[!!]` |
 | 12 | Decisions actives > 30 jours | START | `[--]` info |
 | 13 | Age derniere lecon capturee | START | `[--]` info |
+| 14 | Reference files staleness (Last verified) | START | `[--]` info |
+| 15 | MCP cross-reference sync (tool-routing ↔ services-and-access) | START, END | `[--]` info |
 
 ### Legende
 

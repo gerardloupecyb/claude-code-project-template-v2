@@ -395,6 +395,7 @@ Avant de coder ou modifier l'infra, consulter `docs/references/Reference-files-i
 
 Mettre à jour le fichier de référence dans le MÊME commit que le changement qu'il documente.
 Si un fichier de référence contredit la réalité (secret stale, endpoint changé) → corriger AVANT de travailler.
+Utiliser `/reference-audit` périodiquement pour auto-peupler les fichiers de référence et valider la synchronisation MCP.
 
 ---
 

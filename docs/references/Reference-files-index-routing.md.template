@@ -39,3 +39,7 @@ If a name, endpoint, secret, or ID in any L1-L3 file doesn't match reality
 
 When content in any L1-L3 file changes, update this index if the routing table is affected.
 Reference file updates MUST be committed alongside the infra/code change they document.
+
+---
+
+_Last verified: {{DATE}}_

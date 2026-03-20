@@ -110,3 +110,7 @@
 If a secret name, AppId, endpoint, or service in this file doesn't match reality
 (actual KV / secrets manager / Entra / cloud console) → this file is stale.
 **Fix before any work that depends on it.**
+
+---
+
+_Last verified: {{DATE}}_
