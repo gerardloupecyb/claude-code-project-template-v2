@@ -97,14 +97,15 @@ Pattern découvert : injecter des quality patterns cross-workflow via `.claude/r
 - Projet local : /Users/gerardvinou/Claude code/Claude Projects/project-template-v2
 
 <!-- pre-compact snapshot -->
-**Snapshot pre-compaction** (2026-03-20 12:27)
+**Snapshot pre-compaction** (2026-03-20 13:11)
 
 - **Prochaine etape:** ** Implémenter plan Layer 2 retention gaps (DECISIONS.md, closure quality score, /project-bootstrap, session-gate checks 11-13, CARL RULE_8) — voir docs/plans/2026-03-16-002
 - **Derniers commits:**
+  - a0e28e8 pre-compact snapshot
   - 824b941 docs: update MEMORY.md — session end, execution quality hybridation done
   - 22b35de feat: inject ce-work quality patterns into GSD executor via rules
-  - 06d58c7 fix: update repo URLs after rename to claude-code-project-template
 - **Fichiers modifies:**
+  - ?? DECISIONS.md
   - ?? docs/analyses/
   - ?? docs/plans/2026-03-20-001-analysis-upstream-sync-gaps-plan.md
 <!-- /pre-compact snapshot -->
