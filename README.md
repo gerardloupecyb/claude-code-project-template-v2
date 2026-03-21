@@ -1,6 +1,6 @@
 # Claude Code Project Template
 
-[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](https://github.com/gerardloupecyb/claude-code-project-template/releases)
+[![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)](https://github.com/gerardloupecyb/claude-code-project-template/releases)
 
 Template de projet pour Claude Code avec flywheel de capitalisation, gestion de contexte multi-session, et injection de regles dynamiques via CARL.
 
@@ -234,6 +234,7 @@ Mon Projet/
 │   │   └── session-start.sh               <- Re-injection contexte au demarrage
 │   └── rules/
 │       ├── tool-routing.md                <- Routing outils + anti-flooding
+│       ├── model-routing.md               <- Routing modeles (Opus/Codex)
 │       └── flywheel-workflow.md           <- Workflow capitalisation
 │
 ├── .carl/
@@ -335,6 +336,9 @@ Sans CARL, les fichiers `.carl/` existent mais ne sont pas lus automatiquement. 
 | `.claude/skills/project-sync/SKILL.md` | Skill | Sync outils externes |
 | `.claude/skills/project-bootstrap/SKILL.md` | Skill | Bootstrap cross-projet (Supermemory) |
 | `.claude/skills/context-checkpoint/SKILL.md` | Skill | Checkpoint avant coupure de session |
+| `.claude/skills/task-router/SKILL.md` | Skill | Routing multi-modele (Opus/Codex) |
+| `.claude/rules/model-routing.md` | Rule | Delegation taches code vers executors externes |
+| `.gitignore.template` | Template | Gitignore avec `.task-briefs/` |
 
 ## Ajouter des skills tiers
 
