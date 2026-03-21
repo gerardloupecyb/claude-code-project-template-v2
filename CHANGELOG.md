@@ -4,6 +4,35 @@ Toutes les modifications notables de ce projet sont documentees dans ce fichier.
 Format base sur [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning selon [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] — 2026-03-21
+
+Multi-LLM task router — delegation automatique des taches code vers Codex VS Code.
+
+### Added
+
+#### Multi-LLM Task Router
+- `.claude/rules/model-routing.md` — routing binaire opus/external (auto-charge)
+- `.claude/skills/task-router/SKILL.md` — generateur de context briefs (9e skill)
+- `.gitignore.template` — gitignore avec `.task-briefs/`
+- `docs/plans/2026-03-20-001-analysis-multi-llm-orchestration-codex-delegation.md` — plan deepened
+
+#### Architecture: Layered Context Bridge
+- Context packages structures en 2 couches (Context + Task)
+- Self-check gate unique avant handoff
+- Return signal protocol (`Codex done {slug}`)
+- Failure & retry protocol (max 2 retries → escalade Opus)
+
+#### Integration GSD
+- Routing automatique pendant `gsd:execute-phase` via `model-routing.md`
+- `/task-router` manuel optionnel pour pre-generation de briefs
+- Handoff Codex VS Code en 1 phrase : "lis `.task-briefs/{slug}.md` et execute"
+
+### Changed
+
+- `CLAUDE.md.template` — ajout ligne "Routing modeles" dans outils actifs
+
+---
+
 ## [2.2.0] — 2026-03-20
 
 Reference files system — documentation technique structuree en 4 couches.

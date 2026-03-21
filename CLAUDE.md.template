@@ -11,6 +11,7 @@
 - Compound Engineering   → planning riche, review, capitalisation
 - CARL                   → règles dynamiques selon contexte (domaine `{{CARL_DOMAIN}}`)
 - Discipline outils      → voir `.claude/rules/tool-routing.md`
+- Routing modèles        → voir `.claude/rules/model-routing.md`
 - Quality checks exécution → voir `.claude/rules/execution-quality.md`
 
 ## MCP actifs
